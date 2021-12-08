@@ -60,8 +60,13 @@ uint64_t Velodyne128Parser::GetTimestamp(double base_time, float time_offset,
                                          uint16_t block_id) {
   (void)block_id;
   double t = base_time + time_offset;
+  cyber::Time tt;
+  uint64_t cur_time = tt.Now().ToNanosecond() + static_cast<uint64_t>(time_offset);
   uint64_t timestamp = GetGpsStamp(t, &previous_packet_stamp_, &gps_base_usec_);
-  return timestamp;
+  // return timestamp;
+  if(timestamp == cur_time)
+    std::cout << "stamp = cur" << std::endl;
+  return cur_time;
 }
 
 void Velodyne128Parser::Order(std::shared_ptr<PointCloud> cloud) {
