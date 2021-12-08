@@ -1,0 +1,4 @@
+topic_name: "/apollo/sensor/radar/front"
+bind_port: 15018 
+proto_name: "ContiRadar"
+enable_timeout: false

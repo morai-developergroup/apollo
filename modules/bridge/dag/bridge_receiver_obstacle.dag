@@ -1,0 +1,13 @@
+module_config {
+    module_library: "/apollo/bazel-bin/modules/bridge/libudp_bridge_receiver_component.so"
+
+    components {
+
+        class_name: "UDPBridgeReceiverComponent<perception::PerceptionObstacles>"
+        config {
+            name: "bridge_receiver_PerceptionObstacles"
+            config_file_path: "/apollo/modules/bridge/conf/udp_bridge_receiver_obstacle.pb.txt"
+      }
+   }
+}
+

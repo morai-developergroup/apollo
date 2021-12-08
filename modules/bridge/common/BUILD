@@ -54,6 +54,9 @@ cc_library(
 cc_library(
     name = "udp_listener",
     hdrs = ["udp_listener.h"],
+    deps = [
+        "@boost",
+    ],
 )
 
 cc_library(

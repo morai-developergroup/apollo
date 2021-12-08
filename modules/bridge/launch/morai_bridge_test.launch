@@ -1,0 +1,11 @@
+<cyber>
+
+     <module>
+        <name>bridge_receiver_test</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_test.dag</dag_conf>
+        <process_name>udp_bridge_receiver_test</process_name>
+    </module> 
+
+
+
+</cyber>

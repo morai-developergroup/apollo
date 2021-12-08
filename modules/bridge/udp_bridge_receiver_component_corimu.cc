@@ -14,7 +14,7 @@
  * limitations under the License.
  *****************************************************************************/
 
-#include "modules/bridge/udp_bridge_receiver_component.h"
+#include "modules/bridge/udp_bridge_receiver_component_corimu.h"
 
 #include "cyber/time/clock.h"
 #include "modules/bridge/common/macro.h"
@@ -232,10 +232,15 @@ bool UDPBridgeReceiverComponent<T>::MsgHandle(int fd) {
       
       auto pb_msg = std::make_shared<T>();
       proto_buf->Diserialized(pb_msg);
-      // if(proto_name_ == "CorrectedImu"){
-      // if(proto_name_ == "Chassis"){
-      //   std::cout << pb_msg->throttle_percentage() << std::endl;
-      // }
+      
+      pb_msg->mutable_imu()->mutable_linear_acceleration()->set_x(0);
+      pb_msg->mutable_imu()->mutable_linear_acceleration()->set_y(0);
+      pb_msg->mutable_imu()->mutable_linear_acceleration()->set_z(0);
+
+      pb_msg->mutable_imu()->mutable_angular_velocity()->set_x(0);
+      pb_msg->mutable_imu()->mutable_angular_velocity()->set_y(0);
+      pb_msg->mutable_imu()->mutable_angular_velocity()->set_z(0);
+
       writer_->Write(pb_msg);
       RemoveInvalidBuf(proto_buf->GetMsgID());
       RemoveItem(&proto_list_, proto_buf);
@@ -272,16 +277,7 @@ bool UDPBridgeReceiverComponent<T>::RemoveInvalidBuf(uint32_t msg_id) {
   return true;
 }
 
-BRIDGE_RECV_IMPL(canbus::Chassis);
-BRIDGE_RECV_IMPL(drivers::gnss::GnssBestPose);
-BRIDGE_RECV_IMPL(drivers::gnss::Imu);
-BRIDGE_RECV_IMPL(drivers::gnss::InsStat);
 BRIDGE_RECV_IMPL(localization::CorrectedImu);
-BRIDGE_RECV_IMPL(localization::Gps);
-BRIDGE_RECV_IMPL(drivers::ContiRadar);
-BRIDGE_RECV_IMPL(drivers::CompressedImage);
-BRIDGE_RECV_IMPL(perception::TrafficLightDetection);
-BRIDGE_RECV_IMPL(perception::PerceptionObstacle);
 
 }  // namespace bridge
 }  // namespace apollo

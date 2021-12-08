@@ -27,7 +27,7 @@
 
 #include <cstdlib>
 
-#include "modules/canbus/proto/chassis.pb.h"
+#include "modules/drivers/gnss/proto/imu.pb.h"
 
 #include "cyber/common/log.h"
 #include "modules/bridge/common/bridge_proto_diserialized_buf.h"
@@ -41,11 +41,12 @@ using apollo::bridge::FRAME_SIZE;
 using apollo::bridge::HEADER_FLAG_SIZE;
 using apollo::bridge::hsize;
 using apollo::bridge::MAXEPOLLSIZE;
-using apollo::canbus::Chassis;
-using BPDBChassis = apollo::bridge::BridgeProtoDiserializedBuf<Chassis>;
 
-auto talker_node = apollo::cyber::CreateNode("talker");
-auto talker = talker_node->CreateWriter<Chassis>("/apollo/canbus/chassis");
+using apollo::drivers::gnss::Imu;
+using BPDBImu = apollo::bridge::BridgeProtoDiserializedBuf<Imu>;
+
+// using apollo::canbus::Chassis;
+// using BPDBChassis = apollo::bridge::BridgeProtoDiserializedBuf<Chassis>;
 
 void *pthread_handle_message(void *pfd) {
   struct sockaddr_in client_addr;
@@ -92,7 +93,7 @@ void *pthread_handle_message(void *pfd) {
   ADEBUG << "proto total frames: " << header.GetTotalFrames();
   ADEBUG << "proto frame index: " << header.GetIndex();
 
-  BPDBChassis *proto_buf = new BPDBChassis();
+  BPDBImu *proto_buf = new BPDBImu();
   proto_buf->Initialize(header);
   if (!proto_buf) {
     pthread_exit(nullptr);
@@ -102,26 +103,24 @@ void *pthread_handle_message(void *pfd) {
   char *buf = proto_buf->GetBuf(header.GetFramePos());
   memcpy(buf, cursor, header.GetFrameSize());
   proto_buf->UpdateStatus(header.GetIndex());
-  if (proto_buf->IsReadyDiserialize()) {
+  
+  static auto talker_node_imu = apollo::cyber::CreateNode("talker_imu");
+  static auto talker_imu  = talker_node_imu->CreateWriter<Imu>("/apollo/sensor/gnss/imu");
 
-    auto pb_msg = std::make_shared<Chassis>();
+  // static auto talker_node = apollo::cyber::CreateNode("talker");
+  // static auto talker  = talker_node->CreateWriter<Chassis>("/apollo/canbus/chassis");
+  
+  if (proto_buf->IsReadyDiserialize()) {
+    auto pb_msg = std::make_shared<Imu>();
     proto_buf->Diserialized(pb_msg);
     
-    // std::cout << "throttle percentage: " << pb_msg->throttle_percentage() <<std::endl;
-    ADEBUG << "sequence num: " << pb_msg->header().sequence_num();
-    ADEBUG << "timestamp sec: " << pb_msg->header().timestamp_sec();
-    ADEBUG << "engine rpm: " << pb_msg->engine_rpm();
-    ADEBUG << "odometer m: " << pb_msg->odometer_m();
-    ADEBUG << "throttle percentage: " << pb_msg->throttle_percentage();
-    ADEBUG << "brake percentage: " << pb_msg->brake_percentage();
-    ADEBUG << "steering percentage: " << pb_msg->steering_percentage();
-    ADEBUG << "steering torque nm: " << pb_msg->steering_torque_nm();
-    ADEBUG << "parking brake: " << pb_msg->parking_brake();
+    talker_imu->Write(pb_msg);
   }
   pthread_exit(nullptr);
 }
 
 bool receive(uint16_t port) {
+ 
   
   struct rlimit rt;
   rt.rlim_max = rt.rlim_cur = MAXEPOLLSIZE;
@@ -200,6 +199,9 @@ bool receive(uint16_t port) {
 }
 
 int main(int argc, char *argv[]) {
+
+  apollo::cyber::Init(argv[0]);
+    
   receive(15012);
   return 0;
 }

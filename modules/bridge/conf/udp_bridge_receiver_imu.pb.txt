@@ -1,0 +1,4 @@
+topic_name: "/apollo/sensor/gnss/imu"
+bind_port: 15014
+proto_name: "Imu"
+enable_timeout: false

@@ -27,6 +27,8 @@
 
 #include "modules/bridge/proto/udp_bridge_remote_info.pb.h"
 #include "modules/planning/proto/planning.pb.h"
+#include "modules/control/proto/control_cmd.pb.h"
+#include "modules/canbus/proto/chassis.pb.h"
 
 #include "cyber/class_loader/class_loader.h"
 #include "cyber/component/component.h"
@@ -54,17 +56,23 @@ class UDPBridgeSenderComponent final : public cyber::Component<T> {
   bool Proc(const std::shared_ptr<T> &pb_msg) override;
 
   std::string Name() const { return FLAGS_bridge_module_name; }
-
+  float total_frame_cnt = 0;
+  float total_frame_limit = MAXFLOAT;
  private:
   common::monitor::MonitorLogBuffer monitor_logger_buffer_;
   unsigned int remote_port_ = 0;
   std::string remote_ip_ = "";
   std::string proto_name_ = "";
   std::mutex mutex_;
+  
+
 };
 
 BRIDGE_COMPONENT_REGISTER(planning::ADCTrajectory)
 BRIDGE_COMPONENT_REGISTER(localization::LocalizationEstimate)
+BRIDGE_COMPONENT_REGISTER(control::ControlCommand)
+BRIDGE_COMPONENT_REGISTER(canbus::Chassis)
+
 
 }  // namespace bridge
 }  // namespace apollo

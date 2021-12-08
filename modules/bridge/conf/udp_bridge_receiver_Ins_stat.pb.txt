@@ -1,0 +1,4 @@
+topic_name: "/apollo/sensor/gnss/ins_stat"
+bind_port: 15015
+proto_name: "InsStat"
+enable_timeout: false

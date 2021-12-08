@@ -1,0 +1,4 @@
+topic_name: "/apollo/sensor/camera/front_12mm/image/compressed"
+bind_port: 15100
+proto_name: "CompressedImage"
+enable_timeout: false

@@ -1,0 +1,12 @@
+<cyber>
+    <module>
+        <name>bridge_sender_euro_ncap</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_sender_euro_ncap.dag</dag_conf>
+        <process_name>udp_bridge_sender_euro_ecap</process_name>
+    </module>
+    <module>
+        <name>bridge_sender_euro_ncap_obs</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_sender_euro_ncap_obs.dag</dag_conf>
+        <process_name>udp_bridge_sender_euro_ecap_obs</process_name>
+    </module>
+</cyber>

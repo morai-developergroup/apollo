@@ -1,4 +1,4 @@
-topic_name: "/apollo/canbus/Chassis"
-bind_port: 8900
+topic_name: "/apollo/canbus/chassis"
+bind_port: 15012
 proto_name: "Chassis"
 enable_timeout: false

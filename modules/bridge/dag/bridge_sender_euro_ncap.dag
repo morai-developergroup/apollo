@@ -1,0 +1,14 @@
+module_config {
+    module_library: "/apollo/bazel-bin/modules/bridge/libudp_bridge_sender_component.so"
+    components {
+
+        class_name: "UDPBridgeSenderComponent<bridge::EuroNCAP>"
+        config {
+            name: "bridge_sender_EuroNCAP"
+            config_file_path: "/apollo/modules/bridge/conf/udp_bridge_sender_euro_ncap.pb.txt"
+            readers {
+              channel: "/morai/euro_ncap"
+            }
+      }
+   }
+}

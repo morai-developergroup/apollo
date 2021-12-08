@@ -1,0 +1,7 @@
+<cyber>
+     <module>
+        <name>bridge_receiver_obstacle</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_obstacle.dag</dag_conf>
+        <process_name>udp_bridge_receiver_obstacle</process_name>
+    </module>
+</cyber>

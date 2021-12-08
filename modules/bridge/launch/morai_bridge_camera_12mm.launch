@@ -1,0 +1,12 @@
+<cyber>
+     <module>
+        <name>bridge_receiver_camera_12mm</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_camera_12mm.dag</dag_conf>
+        <process_name>udp_bridge_receiver_camera</process_name>
+    </module>
+    <module>
+        <name>bridge_receiver_decompress_image_front_12mm</name>
+        <dag_conf>/apollo/modules/drivers/tools/image_decompress/dag/image_decompress_front_12mm.dag</dag_conf>
+        <process_name>udp_bridge_receiver_decompress_image</process_name>
+    </module>   
+</cyber>

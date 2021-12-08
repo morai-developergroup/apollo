@@ -96,6 +96,7 @@ bool BridgeProtoDiserializedBuf<T>::Diserialized(std::shared_ptr<T> proto) {
 
 template <typename T>
 void BridgeProtoDiserializedBuf<T>::UpdateStatus(uint32_t frame_index) {
+
   size_t status_size = status_list_.size();
   if (status_size == 0) {
     is_ready_diser = false;
@@ -103,11 +104,14 @@ void BridgeProtoDiserializedBuf<T>::UpdateStatus(uint32_t frame_index) {
   }
 
   uint32_t status_index = frame_index / INT_BITS;
+
   status_list_[status_index] |= (1 << (frame_index % INT_BITS));
+
   for (size_t i = 0; i < status_size; i++) {
     if (i == status_size - 1) {
       if (static_cast<int>(status_list_[i]) ==
           (1 << total_frames_ % INT_BITS) - 1) {
+        // std::cout << "driserialized is ready" <<std::endl;
         AINFO << "diserialized is ready";
         is_ready_diser = true;
       } else {
@@ -137,11 +141,16 @@ template <typename T>
 bool BridgeProtoDiserializedBuf<T>::Initialize(const BridgeHeader &header) {
   total_size_ = header.GetMsgSize();
   total_frames_ = header.GetTotalFrames();
+  // std::cout << "total frame : " << header.GetTotalFrames() << std::endl;
+  
   if (total_frames_ == 0) {
     return false;
   }
+
   int status_size = static_cast<int>(total_frames_ / INT_BITS +
                                      ((total_frames_ % INT_BITS) ? 1 : 0));
+
+
   if (status_list_.empty()) {
     for (int i = 0; i < status_size; i++) {
       status_list_.push_back(0);

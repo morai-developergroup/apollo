@@ -19,7 +19,9 @@
 namespace apollo {
 namespace bridge {
 
-#define _1K 1024
+// #define _1K 20480
+#define _1K 10240 
+// #define _1K 15
 
 #define FREE_ARRY(arry) \
   if (arry) {           \
@@ -33,6 +35,6 @@ namespace bridge {
   }                     \
   p = nullptr
 
-constexpr uint32_t FRAME_SIZE = 1024;
+constexpr uint32_t FRAME_SIZE = _1K;
 }  // namespace bridge
 }  // namespace apollo

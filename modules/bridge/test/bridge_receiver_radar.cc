@@ -27,7 +27,7 @@
 
 #include <cstdlib>
 
-#include "modules/canbus/proto/chassis.pb.h"
+#include "modules/drivers/proto/conti_radar.pb.h"
 
 #include "cyber/common/log.h"
 #include "modules/bridge/common/bridge_proto_diserialized_buf.h"
@@ -41,11 +41,10 @@ using apollo::bridge::FRAME_SIZE;
 using apollo::bridge::HEADER_FLAG_SIZE;
 using apollo::bridge::hsize;
 using apollo::bridge::MAXEPOLLSIZE;
-using apollo::canbus::Chassis;
-using BPDBChassis = apollo::bridge::BridgeProtoDiserializedBuf<Chassis>;
+using apollo::drivers::ContiRadar;
+using BPDBChassis = apollo::bridge::BridgeProtoDiserializedBuf<ContiRadar>;
 
-auto talker_node = apollo::cyber::CreateNode("talker");
-auto talker = talker_node->CreateWriter<Chassis>("/apollo/canbus/chassis");
+BPDBChassis *proto_buf = new BPDBChassis();
 
 void *pthread_handle_message(void *pfd) {
   struct sockaddr_in client_addr;
@@ -88,41 +87,55 @@ void *pthread_handle_message(void *pfd) {
   }
 
   ADEBUG << "proto name : " << header.GetMsgName().c_str();
+  std::cout << "proto name : " << header.GetMsgName().c_str() << std::endl;
   ADEBUG << "proto sequence num: " << header.GetMsgID();
-  ADEBUG << "proto total frames: " << header.GetTotalFrames();
   ADEBUG << "proto frame index: " << header.GetIndex();
 
-  BPDBChassis *proto_buf = new BPDBChassis();
+
   proto_buf->Initialize(header);
+
   if (!proto_buf) {
     pthread_exit(nullptr);
+    std::cout << " proto buf is null " << std::endl;
   }
+
+
 
   cursor = total_buf + header_size;
   char *buf = proto_buf->GetBuf(header.GetFramePos());
   memcpy(buf, cursor, header.GetFrameSize());
-  proto_buf->UpdateStatus(header.GetIndex());
-  if (proto_buf->IsReadyDiserialize()) {
+  // std::cout << " getframesize : " << header.GetFrameSize() << std::endl;
 
-    auto pb_msg = std::make_shared<Chassis>();
+
+  std::cout << "proto frame index: " << header.GetIndex() << std::endl;;
+  proto_buf->UpdateStatus(header.GetIndex());
+
+
+  // std::cout << "proto total frames: " << header.GetTotalFrames() << std::endl;;
+
+  // std::cout << proto_buf->IsReadyDiserialize() << std::endl;
+  // std::cout << "header size : " << header.GetHeaderSize() << std::endl;
+
+  // std::cout << "msg size : " << header.GetMsgSize() << std::endl;
+  // msg size 검증 완료
+
+  if (proto_buf->IsReadyDiserialize()) {
+    auto pb_msg = std::make_shared<ContiRadar>();
     proto_buf->Diserialized(pb_msg);
-    
-    // std::cout << "throttle percentage: " << pb_msg->throttle_percentage() <<std::endl;
     ADEBUG << "sequence num: " << pb_msg->header().sequence_num();
+    // std::cout << "sequence num: " << pb_msg->header().sequence_num() << std::endl;
     ADEBUG << "timestamp sec: " << pb_msg->header().timestamp_sec();
-    ADEBUG << "engine rpm: " << pb_msg->engine_rpm();
-    ADEBUG << "odometer m: " << pb_msg->odometer_m();
-    ADEBUG << "throttle percentage: " << pb_msg->throttle_percentage();
-    ADEBUG << "brake percentage: " << pb_msg->brake_percentage();
-    ADEBUG << "steering percentage: " << pb_msg->steering_percentage();
-    ADEBUG << "steering torque nm: " << pb_msg->steering_torque_nm();
-    ADEBUG << "parking brake: " << pb_msg->parking_brake();
+    // std::cout << pb_msg->mutable_contiobs()->;
+    // pb_msg->object_list_status().set_interface_version()
+    std::cout << "nof" << pb_msg->mutable_object_list_status()->nof_objects() << std::endl;
+    std::cout << "meas" << pb_msg->mutable_object_list_status()->meas_counter()<< std::endl;
+    
+    proto_buf = new BPDBChassis();
   }
   pthread_exit(nullptr);
 }
 
 bool receive(uint16_t port) {
-  
   struct rlimit rt;
   rt.rlim_max = rt.rlim_cur = MAXEPOLLSIZE;
   if (setrlimit(RLIMIT_NOFILE, &rt) == -1) {
@@ -200,6 +213,6 @@ bool receive(uint16_t port) {
 }
 
 int main(int argc, char *argv[]) {
-  receive(15012);
+  receive(15018);
   return 0;
 }

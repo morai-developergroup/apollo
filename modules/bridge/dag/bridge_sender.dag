@@ -2,25 +2,14 @@ module_config {
     module_library: "/apollo/bazel-bin/modules/bridge/libudp_bridge_sender_component.so"
     components {
 
-        class_name: "UDPBridgeSenderComponent<planning::ADCTrajectory>"
+        class_name: "UDPBridgeSenderComponent<control::ControlCommand>"
         config {
-            name: "bridge_sender_ADCTrajectory"
-            config_file_path: "/apollo/modules/bridge/conf/udp_bridge_sender_adctrajectory.pb.txt"
+            name: "bridge_sender_ControlCommand"
+            config_file_path: "/apollo/modules/bridge/conf/udp_bridge_sender_control.pb.txt"
             readers {
-              channel: "/apollo/planning"
+              channel: "/apollo/control"
             }
       }
    }
 
-    components {
-
-        class_name: "UDPBridgeSenderComponent<localization::LocalizationEstimate>"
-        config {
-            name: "bridge_sender_LocalizationEstimate"
-            config_file_path: "/apollo/modules/bridge/conf/udp_bridge_sender_localization.pb.txt"
-            readers {
-              channel: "/apollo/localization/pose"
-            }
-      }
-   }
 }

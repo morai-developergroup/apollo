@@ -99,16 +99,7 @@ class UDPBridgeReceiverComponent final : public cyber::Component<> {
 
 };
 
-RECEIVER_BRIDGE_COMPONENT_REGISTER(canbus::Chassis)
-RECEIVER_BRIDGE_COMPONENT_REGISTER(drivers::gnss::GnssBestPose)
-RECEIVER_BRIDGE_COMPONENT_REGISTER(drivers::gnss::Imu)
-RECEIVER_BRIDGE_COMPONENT_REGISTER(drivers::gnss::InsStat)
 RECEIVER_BRIDGE_COMPONENT_REGISTER(localization::CorrectedImu)
-RECEIVER_BRIDGE_COMPONENT_REGISTER(localization::Gps)
-RECEIVER_BRIDGE_COMPONENT_REGISTER(drivers::ContiRadar);
-RECEIVER_BRIDGE_COMPONENT_REGISTER(drivers::CompressedImage);
-RECEIVER_BRIDGE_COMPONENT_REGISTER(perception::TrafficLightDetection);
-RECEIVER_BRIDGE_COMPONENT_REGISTER(perception::PerceptionObstacles);
 
 }  // namespace bridge
 }  // namespace apollo

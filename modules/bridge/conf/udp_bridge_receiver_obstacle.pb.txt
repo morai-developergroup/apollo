@@ -1,0 +1,4 @@
+topic_name: "/apollo/perception/obstacles"
+bind_port: 7505
+proto_name: "PerceptionObstacles"
+enable_timeout: false

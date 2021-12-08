@@ -14,7 +14,7 @@
  * limitations under the License.
  *****************************************************************************/
 
-#include "modules/bridge/udp_bridge_receiver_component.h"
+#include "modules/bridge/udp_bridge_receiver_component_camera.h"
 
 #include "cyber/time/clock.h"
 #include "modules/bridge/common/macro.h"

@@ -44,8 +44,7 @@ using apollo::bridge::MAXEPOLLSIZE;
 using apollo::canbus::Chassis;
 using BPDBChassis = apollo::bridge::BridgeProtoDiserializedBuf<Chassis>;
 
-auto talker_node = apollo::cyber::CreateNode("talker");
-auto talker = talker_node->CreateWriter<Chassis>("/apollo/canbus/chassis");
+
 
 void *pthread_handle_message(void *pfd) {
   struct sockaddr_in client_addr;
@@ -102,12 +101,14 @@ void *pthread_handle_message(void *pfd) {
   char *buf = proto_buf->GetBuf(header.GetFramePos());
   memcpy(buf, cursor, header.GetFrameSize());
   proto_buf->UpdateStatus(header.GetIndex());
-  if (proto_buf->IsReadyDiserialize()) {
+  
+  static auto talker_node = apollo::cyber::CreateNode("talker");
+  static auto talker  = talker_node->CreateWriter<Chassis>("/apollo/canbus/chassis");
 
+  
+  if (proto_buf->IsReadyDiserialize()) {
     auto pb_msg = std::make_shared<Chassis>();
     proto_buf->Diserialized(pb_msg);
-    
-    // std::cout << "throttle percentage: " << pb_msg->throttle_percentage() <<std::endl;
     ADEBUG << "sequence num: " << pb_msg->header().sequence_num();
     ADEBUG << "timestamp sec: " << pb_msg->header().timestamp_sec();
     ADEBUG << "engine rpm: " << pb_msg->engine_rpm();
@@ -117,11 +118,15 @@ void *pthread_handle_message(void *pfd) {
     ADEBUG << "steering percentage: " << pb_msg->steering_percentage();
     ADEBUG << "steering torque nm: " << pb_msg->steering_torque_nm();
     ADEBUG << "parking brake: " << pb_msg->parking_brake();
+
+    std::cout << "throttle percentage: " << pb_msg->throttle_percentage() <<std::endl;
+    talker->Write(pb_msg);
   }
   pthread_exit(nullptr);
 }
 
 bool receive(uint16_t port) {
+ 
   
   struct rlimit rt;
   rt.rlim_max = rt.rlim_cur = MAXEPOLLSIZE;
@@ -169,6 +174,7 @@ bool receive(uint16_t port) {
   bool res = true;
   struct epoll_event events[MAXEPOLLSIZE];
   while (true) {
+    std::cout << " while " <<std::endl;
     nfds = epoll_wait(kdpfd, events, 10000, -1);
     if (nfds == -1) {
       ADEBUG << "some error occurs while waiting for I/O event";
@@ -200,6 +206,9 @@ bool receive(uint16_t port) {
 }
 
 int main(int argc, char *argv[]) {
+
+  apollo::cyber::Init(argv[0]);
+    
   receive(15012);
   return 0;
 }

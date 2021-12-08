@@ -115,6 +115,8 @@ bool UDPBridgeMultiReceiverComponent::MsgHandle(int fd) {
   socklen_t sock_len = static_cast<socklen_t>(sizeof(client_addr));
   int total_recv = 2 * FRAME_SIZE;
   char total_buf[2 * FRAME_SIZE] = {0};
+  while(true){
+  std::cout << "while" << std::endl;
   int bytes =
       static_cast<int>(recvfrom(fd, total_buf, total_recv, 0,
                                 (struct sockaddr *)&client_addr, &sock_len));
@@ -165,6 +167,7 @@ bool UDPBridgeMultiReceiverComponent::MsgHandle(int fd) {
     proto_buf->DiserializedAndPub();
     RemoveInvalidBuf(proto_buf->GetMsgID(), proto_buf->GetMsgName());
     RemoveItem(&proto_list_, proto_buf);
+  }
   }
   return true;
 }

@@ -26,11 +26,13 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <stdio.h>
 
 namespace apollo {
 namespace bridge {
 
-constexpr int MAXEPOLLSIZE = 100;
+// constexpr int MAXEPOLLSIZE = 2147483647;
+constexpr int MAXEPOLLSIZE = 100000;
 
 template <typename T>
 class UDPListener {
@@ -70,6 +72,7 @@ class UDPListener {
   int listener_sock_ = -1;
   func msg_handle_ = nullptr;
   int kdpfd_ = 0;
+  std::mutex mutex_;
 };
 
 template <typename T>
@@ -94,9 +97,19 @@ bool UDPListener<T>::Initialize(T *receiver, func msg_handle, uint16_t port) {
   if (listener_sock_ == -1) {
     return false;
   }
+
+  int flags = fcntl(listener_sock_, F_GETFL);
+  flags |= O_NONBLOCK;
+  if(fcntl(listener_sock_, F_SETFL, flags)< 0)
+  {
+    std::cout << "listener_sock_ fcntl() error" << std::endl;
+    return false;
+  }
+
   int opt = SO_REUSEADDR;
+  // int opt = true;
   setsockopt(listener_sock_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-  setnonblocking(listener_sock_);
+  // setnonblocking(listener_sock_);
 
   struct sockaddr_in serv_addr;
   serv_addr.sin_family = PF_INET;
@@ -105,51 +118,37 @@ bool UDPListener<T>::Initialize(T *receiver, func msg_handle, uint16_t port) {
   if (bind(listener_sock_, (struct sockaddr *)&serv_addr,
            sizeof(struct sockaddr)) == -1) {
     close(listener_sock_);
+    std::cout << "bind socker failed" << std::endl;
     return false;
   }
-  kdpfd_ = epoll_create(MAXEPOLLSIZE);
-  struct epoll_event ev;
-  ev.events = EPOLLIN | EPOLLET;
-  ev.data.fd = listener_sock_;
-  if (epoll_ctl(kdpfd_, EPOLL_CTL_ADD, listener_sock_, &ev) < 0) {
-    close(listener_sock_);
-    return false;
-  }
+
   return true;
 }
 
 template <typename T>
 bool UDPListener<T>::Listen() {
-  int nfds = -1;
-  bool res = true;
-  struct epoll_event events[MAXEPOLLSIZE];
-  while (true) {
-    nfds = epoll_wait(kdpfd_, events, 10000, -1);
-    if (nfds == -1) {
-      res = false;
-      break;
-    }
 
-    for (int i = 0; i < nfds; ++i) {
-      if (events[i].data.fd == listener_sock_) {
-        pthread_t thread;
-        pthread_attr_t attr;
-        pthread_attr_init(&attr);
-        pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
-        pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-        Param *par = new Param;
-        par->fd_ = events[i].data.fd;
-        par->listener_ = this;
-        if (pthread_create(&thread, &attr,
-                           &UDPListener<T>::pthread_handle_message,
-                           reinterpret_cast<void *>(par))) {
-          res = false;
-          return res;
-        }
-      }
-    }
+  bool res = true;
+
+  pthread_t thread;
+  pthread_attr_t attr;
+  pthread_attr_init(&attr);
+  pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
+  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+  
+  Param *par = new Param;
+  par->fd_ = listener_sock_;
+  par->listener_ = this;
+
+  if (pthread_create(&thread, &attr,
+                      &UDPListener<T>::pthread_handle_message,
+                      reinterpret_cast<void *>(par))) {
+    res = false;
+    return res;
   }
-  close(listener_sock_);
+  
+  // UDPListener<T>::pthread_handle_message(reinterpret_cast<void *>(par));
+
   return res;
 }
 

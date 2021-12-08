@@ -1,0 +1,4 @@
+topic_name: "/apollo/sensor/gnss/corrected_imu"
+bind_port: 15013
+proto_name: "CorrectedImu"
+enable_timeout: false

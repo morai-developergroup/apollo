@@ -28,6 +28,7 @@ namespace bridge {
 using apollo::bridge::UDPBridgeSenderRemoteInfo;
 using apollo::cyber::io::Session;
 using apollo::localization::LocalizationEstimate;
+using apollo::control::ControlCommand;
 
 template <typename T>
 bool UDPBridgeSenderComponent<T>::Init() {
@@ -64,6 +65,10 @@ bool UDPBridgeSenderComponent<T>::Proc(const std::shared_ptr<T> &pb_msg) {
   server_addr.sin_port = htons(static_cast<uint16_t>(remote_port_));
   int sock_fd = socket(AF_INET, SOCK_DGRAM | SOCK_NONBLOCK, 0);
 
+  int fBroadcast = 1;
+  // int sockopt = setsockopt(sock_fd, SOL_SOCKET, SO_BROADCAST, (const char*)fBroadcast, sizeof(fBroadcast));
+  setsockopt(sock_fd, SOL_SOCKET, SO_BROADCAST, (const char*)fBroadcast, sizeof(fBroadcast));
+
   int res =
       connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
   if (res < 0) {
@@ -87,6 +92,8 @@ bool UDPBridgeSenderComponent<T>::Proc(const std::shared_ptr<T> &pb_msg) {
 
 BRIDGE_IMPL(LocalizationEstimate);
 BRIDGE_IMPL(planning::ADCTrajectory);
+BRIDGE_IMPL(control::ControlCommand);
+BRIDGE_IMPL(canbus::Chassis);
 
 }  // namespace bridge
 }  // namespace apollo

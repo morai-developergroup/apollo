@@ -1,0 +1,9 @@
+<cyber>
+
+    <module>
+        <name>bridge_receiver_ins_stat</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_ins_stat.dag</dag_conf>
+        <process_name>udp_bridge_receiver_ins_stat</process_name>
+    </module>
+
+</cyber>

@@ -1,0 +1,4 @@
+topic_name: "/apollo/sensor/gnss/odometry"
+bind_port: 15016
+proto_name: "Odometry"
+enable_timeout: false

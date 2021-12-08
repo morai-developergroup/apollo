@@ -1,0 +1,11 @@
+<cyber>
+
+     <module>
+        <name>bridge_receiver_best_pose</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_best_pose.dag</dag_conf>
+        <process_name>udp_bridge_receiver_best_pose</process_name>
+    </module> 
+
+
+
+</cyber>

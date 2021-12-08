@@ -1,0 +1,4 @@
+topic_name: "/apollo/sensor/gnss/best_pose"
+bind_port: 15011
+proto_name: "BestPose"
+enable_timeout: false
