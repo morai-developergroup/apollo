@@ -6,7 +6,7 @@
     </module>
     <module>
         <name>bridge_receiver_decompress_image</name>
-        <dag_conf>/apollo/modules/drivers/tools/image_decompress/dag/image_decompress_front_6mm.dag</dag_conf>
+        <dag_conf>/apollo/modules/drivers/tools/image_decompress/dag/image_decompress.dag</dag_conf>
         <process_name>udp_bridge_receiver_decompress_image</process_name>
     </module>   
 </cyber>
