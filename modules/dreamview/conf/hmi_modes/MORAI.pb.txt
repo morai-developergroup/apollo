@@ -31,7 +31,7 @@ cyber_modules {
 cyber_modules {
   key: "Traffic Light GT_data"
   value: {
-    dag_files: "/apollo/modules/bridge/dag/bridge_receiver_obstacle.dag"
+    dag_files: "/apollo/modules/bridge/dag/bridge_receiver_traffic_light.dag"
   }
 }
 cyber_modules {
