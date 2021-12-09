@@ -67,7 +67,7 @@ cyber_modules {
 cyber_modules {
   key: "Camera"
   value: {
-    dag_files: "/apollo/modules/bridge/dag/bridge_receiver_camera_12mm.dag"
+    dag_files: "/apollo/modules/bridge/dag/bridge_receiver_camera.dag"
   }
 }
 monitored_components {
