@@ -1,3 +1,0 @@
-remote_ip: "192.168.1.11"
-remote_port: 16001
-proto_name: "EuroNcap"

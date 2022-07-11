@@ -93,6 +93,16 @@ cc_library(
     ],
 )
 cc_library(
+    name = "udp_bridge_receiver_chassis",
+    srcs = ["udp_bridge_receiver_component_chassis.cc"],
+    hdrs = ["udp_bridge_receiver_component_chassis.h"],
+    copts = BRIDGE_COPTS,
+    deps = [
+        ":udp_bridge",
+        "//modules/bridge/common:udp_listener",
+    ],
+)
+cc_library(
     name = "udp_bridge_receiver_camera",
     srcs = ["udp_bridge_receiver_component_camera.cc"],
     hdrs = ["udp_bridge_receiver_component_camera.h"],
@@ -131,6 +141,12 @@ cc_binary(
     linkshared = True,
     linkstatic = False,
     deps = [":udp_bridge_receiver_corimu"],
+)
+cc_binary(
+    name = "libudp_bridge_receiver_component_chassis.so",
+    linkshared = True,
+    linkstatic = False,
+    deps = [":udp_bridge_receiver_chassis"],
 )
 cc_binary(
     name = "libudp_bridge_receiver_component_camera.so",

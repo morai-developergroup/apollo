@@ -4,11 +4,11 @@
         <dag_conf>/apollo/modules/bridge/dag/bridge_sender.dag</dag_conf>
         <process_name>udp_bridge_sender</process_name>
     </module>
-    <module>
+    <!-- <module>
         <name>bridge_sender_chassis</name>
         <dag_conf>/apollo/modules/bridge/dag/bridge_sender_chassis.dag</dag_conf>
         <process_name>udp_bridge_sender_chassis</process_name>
-    </module>   
+    </module>    -->
     <module>
         <name>bridge_receiver_ins_stat</name>
         <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_ins_stat.dag</dag_conf>
@@ -39,4 +39,20 @@
         <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_odometry.dag</dag_conf>
         <process_name>udp_bridge_receiver_odometry</process_name>
     </module>
+    <!-- <module>
+        <name>bridge_receiver_obstacle</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_obstacle.dag</dag_conf>
+        <process_name>udp_bridge_receiver_obstacle</process_name>
+    </module> -->
+    <!-- <module>
+        <name>bridge_receiver_traffic_light</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_traffic_light.dag</dag_conf>
+        <process_name>udp_bridge_receiver_traffic_light</process_name>
+    </module> -->
+    <module>
+        <name>bridge_receiver_radar</name>
+        <dag_conf>/apollo/modules/bridge/dag/bridge_receiver_radar.dag</dag_conf>
+        <process_name>udp_bridge_receiver_radar</process_name>
+    </module>
+
 </cyber>
